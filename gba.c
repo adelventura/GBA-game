@@ -12,7 +12,7 @@ void waitForVBlank(void)
     }
 
     // (2) keep going until we're in vBlank:
-    while (*SCANLINECOUNTER <= HEIGHT)
+    while (*SCANLINECOUNTER < HEIGHT)
     {
     }
     // (3) Finally, increment the vBlank counter:
@@ -43,12 +43,25 @@ void drawRectDMA(int x, int y, int width, int height, volatile u16 color)
         DMA[3].src = &color;
         DMA[3].dst = &videoBuffer[OFFSET(row, x, WIDTH)];
 
-        DMA[3].cnt = width | DMA_SOURCE_FIXED | DMA_ON;
+        DMA[3].cnt = width | DMA_SOURCE_FIXED | DMA_ON | DMA_NOW;
+    }
+}
+
+void drawFullScreenImagePatchDMA(int x, int y, int width, int height, const u16 *image)
+{
+    for (int row = 0; row < height; row += 1)
+    {
+        DMA[3].cnt = 0;
+        DMA[3].src = &image[OFFSET(y + row, x, WIDTH)];
+        DMA[3].dst = &videoBuffer[OFFSET(y + row, x, WIDTH)];
+
+        DMA[3].cnt = width | DMA_SOURCE_INCREMENT | DMA_ON;
     }
 }
 
 void drawFullScreenImageDMA(const u16 *image)
 {
+    DMA[3].cnt = 0;
     DMA[3].src = image;
     DMA[3].dst = videoBuffer;
     DMA[3].cnt = WIDTH * HEIGHT | DMA_SOURCE_INCREMENT | DMA_ON;
@@ -66,6 +79,7 @@ void drawImageDMA(int x, int y, int width, int height, const u16 *image)
 {
     for (int row = 0; row < height; row += 1)
     {
+        DMA[3].cnt = 0;
         DMA[3].src = &image[OFFSET(row, 0, width)];
         DMA[3].dst = &videoBuffer[OFFSET(y + row, x, WIDTH)];
 
@@ -75,6 +89,7 @@ void drawImageDMA(int x, int y, int width, int height, const u16 *image)
 
 void fillScreenDMA(volatile u16 color)
 {
+    DMA[3].cnt = 0;
     DMA[3].src = &color;
     DMA[3].dst = videoBuffer;
     DMA[3].cnt = WIDTH * HEIGHT | DMA_SOURCE_FIXED | DMA_DESTINATION_INCREMENT | DMA_ON;

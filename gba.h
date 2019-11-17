@@ -16,17 +16,17 @@ typedef unsigned char u8;
 // ---------------------------------------------------------------------------
 //                       MODE3 MACROS
 // ---------------------------------------------------------------------------
-#define OFFSET(r, c, rowlen) ((c)+(rowlen)*(r))
+#define OFFSET(r, c, rowlen) ((c) + (rowlen) * (r))
 
-#define REG_DISPCNT  *(volatile unsigned short *) 0x4000000
+#define REG_DISPCNT *(volatile unsigned short *)0x4000000
 #define MODE3 3
-#define BG2_ENABLE (1<<10)
+#define BG2_ENABLE (1 << 10)
 
-#define COLOR(r, g, b) ((r) | (g)<<5 | (b)<<10)
-#define WHITE COLOR(31,31,31)
-#define RED COLOR(31,0,0)
-#define GREEN COLOR(0,31,0)
-#define BLUE COLOR(0,0,31)
+#define COLOR(r, g, b) ((r) | (g) << 5 | (b) << 10)
+#define WHITE COLOR(31, 31, 31)
+#define RED COLOR(31, 0, 0)
+#define GREEN COLOR(0, 31, 0)
+#define BLUE COLOR(0, 0, 31)
 #define MAGENTA COLOR(31, 0, 31)
 #define CYAN COLOR(0, 31, 31)
 #define YELLOW COLOR(31, 31, 0)
@@ -43,18 +43,18 @@ extern volatile unsigned short *videoBuffer;
 // ---------------------------------------------------------------------------
 //                       BUTTON INPUT
 // ---------------------------------------------------------------------------
-#define BUTTON_A		(1<<0)
-#define BUTTON_B		(1<<1)
-#define BUTTON_SELECT	(1<<2)
-#define BUTTON_START	(1<<3)
-#define BUTTON_RIGHT	(1<<4)
-#define BUTTON_LEFT		(1<<5)
-#define BUTTON_UP		(1<<6)
-#define BUTTON_DOWN		(1<<7)
-#define BUTTON_R		(1<<8)
-#define BUTTON_L		(1<<9)
+#define BUTTON_A (1 << 0)
+#define BUTTON_B (1 << 1)
+#define BUTTON_SELECT (1 << 2)
+#define BUTTON_START (1 << 3)
+#define BUTTON_RIGHT (1 << 4)
+#define BUTTON_LEFT (1 << 5)
+#define BUTTON_UP (1 << 6)
+#define BUTTON_DOWN (1 << 7)
+#define BUTTON_R (1 << 8)
+#define BUTTON_L (1 << 9)
 
-#define BUTTONS *(volatile u32 *) 0x4000130
+#define BUTTONS *(volatile u32 *)0x4000130
 #define KEY_DOWN(key, buttons) (~(buttons) & (key))
 
 // Remember that a button is recently pressed if it wasn't pressed in the last
@@ -68,12 +68,12 @@ extern volatile unsigned short *videoBuffer;
 // ---------------------------------------------------------------------------
 typedef struct
 {
-	const volatile void *src;
-	const volatile void *dst;
-	u32                  cnt;
+    const volatile void *src;
+    const volatile void *dst;
+    u32 cnt;
 } DMA_CONTROLLER;
 
-#define DMA ((volatile DMA_CONTROLLER *) 0x040000B0)
+#define DMA ((volatile DMA_CONTROLLER *)0x040000B0)
 
 // Defines
 #define DMA_CHANNEL_0 0
@@ -137,6 +137,7 @@ int randint(int min, int max);
 void setPixel(int x, int y, u16 color);
 void drawRectDMA(int x, int y, int width, int height, volatile u16 color);
 void drawFullScreenImageDMA(const u16 *image);
+void drawFullScreenImagePatchDMA(int x, int y, int width, int height, const u16 *image);
 void drawImageDMA(int x, int y, int width, int height, const u16 *image);
 void fillScreenDMA(volatile u16 color);
 void drawChar(int col, int row, char ch, u16 color);

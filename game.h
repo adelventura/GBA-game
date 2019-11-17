@@ -3,6 +3,14 @@
 
 #include "gba.h"
 
+#define SPEED 3
+#define INITIAL_SIZE 6
+#define WINNING_SIZE 100
+
+#define NUM_FISH 4
+#define SMALL_FISH 1
+#define BIG_FISH 30
+
 typedef enum
 {
     START,
@@ -13,10 +21,11 @@ typedef enum
 
 typedef struct fish
 {
-    int direction;
     int size;
     int x;
     int y;
+    int vx;
+    int vy;
 } Fish;
 
 typedef struct shark
@@ -25,5 +34,14 @@ typedef struct shark
     int x;
     int y;
 } Shark;
+
+typedef struct state
+{
+    GBAState state;
+
+    Shark player;
+
+    Fish fish[4];
+} State;
 
 #endif

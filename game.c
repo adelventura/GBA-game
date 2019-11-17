@@ -3,6 +3,7 @@
 
 #include "gba.h"
 #include "game.h"
+#include "render.h"
 
 #include "images/shark.h"
 #include "images/fish.h"
@@ -10,33 +11,6 @@
 #include "images/splash_screen.h"
 #include "images/win.h"
 #include "images/lose.h"
-
-const int SPEED = 3;
-const int INITIAL_SIZE = 10;
-const int WINNING_SIZE = 100;
-
-typedef struct state
-{
-    GBAState state;
-
-    Shark player;
-
-    Fish fish[10];
-    int number_of_fish;
-} State;
-
-void render_score(Shark *shark)
-{
-    char *formatted = (char *)malloc(50 * sizeof(char));
-    sprintf(formatted, "score: %d", shark->size - INITIAL_SIZE);
-    drawString(2, HEIGHT - 10, formatted, YELLOW);
-    free(formatted);
-}
-
-void render_shark(Shark *shark)
-{
-    drawRectDMA(shark->x, shark->y, shark->size, shark->size, RED);
-}
 
 int clamp(int min, int max, int current)
 {
@@ -51,14 +25,53 @@ int clamp(int min, int max, int current)
     return current;
 }
 
-State new_game()
+Fish new_fish(void)
 {
-    return (State){
+    int size = randint(SMALL_FISH, BIG_FISH);
+
+    if (randint(0, 100) > 50)
+    {
+        // top/bottom
+        int vx = (randint(0, 100) > 50 ? -1 : 1) * randint(1, 2);
+        int vy = (randint(0, 100) > 50 ? -1 : 1) * randint(1, 2);
+
+        return (Fish){
+            .size = size,
+            .x = randint(0, WIDTH),
+            .y = (vy > 0) ? 0 : HEIGHT - size,
+            .vx = vx,
+            .vy = vy};
+    }
+    else
+    {
+        // left/right
+        int vx = (randint(0, 100) > 50 ? -1 : 1) * randint(1, 2);
+        int vy = (randint(0, 100) > 50 ? -1 : 1) * randint(1, 2);
+
+        return (Fish){
+            .size = size,
+            .x = (vx > 0) ? 0 : WIDTH - size,
+            .y = randint(0, HEIGHT),
+            .vx = vx,
+            .vy = vy};
+    }
+}
+
+State new_game(void)
+{
+    State state = {
         .state = START,
         .player = {
             .x = 10,
             .y = 10,
             .size = INITIAL_SIZE}};
+
+    for (int i = 0; i < NUM_FISH; i++)
+    {
+        state.fish[i] = new_fish();
+    }
+
+    return state;
 }
 
 void handle_select(State *state, u32 buttons)
@@ -69,22 +82,33 @@ void handle_select(State *state, u32 buttons)
     }
 }
 
-void start_on_keypress(State *state, u32 buttons)
+void start_on_keypress(State *state, u32 prev, u32 curr)
 {
-    if (buttons != BUTTONS)
+    UNUSED(prev);
+    if (curr != BUTTONS)
     {
         *state = new_game();
         state->state = PLAY;
+
+        drawFullScreenImageDMA(bg);
     }
 }
 
-void play(State *state, u32 buttons)
+void update(State *state, u32 buttons)
 {
-    drawFullScreenImageDMA(bg);
-
     Shark *player = &state->player;
-    render_shark(player);
-    render_score(player);
+
+    for (int i = 0; i < NUM_FISH; i++)
+    {
+        Fish *fish = &state->fish[i];
+        fish->x += fish->vx;
+        fish->y += fish->vy;
+
+        if ((fish->x < 0 && fish->vx < 0) || (fish->x > (fish->size + WIDTH) && fish->vx > 0) || (fish->y < 0 && fish->vy < 0) || (fish->y > (fish->size + HEIGHT) && fish->vy > 0))
+        {
+            state->fish[i] = new_fish();
+        }
+    }
 
     if (KEY_DOWN(BUTTON_DOWN, buttons))
     {
@@ -134,24 +158,25 @@ int main(void)
         {
         case START:
             drawFullScreenImageDMA(splash_screen);
-            start_on_keypress(&state, currentButtons);
+            start_on_keypress(&state, previousButtons, currentButtons);
             break;
         case PLAY:
-            play(&state, currentButtons);
+            clear(&state);
+            update(&state, currentButtons);
+            render(&state);
             break;
         case WIN:
             drawFullScreenImageDMA(win);
-            start_on_keypress(&state, currentButtons);
+            start_on_keypress(&state, previousButtons, currentButtons);
             break;
         case LOSE:
             drawFullScreenImageDMA(lose);
-            start_on_keypress(&state, currentButtons);
+            start_on_keypress(&state, previousButtons, currentButtons);
             break;
         }
 
         previousButtons = currentButtons; // Store the current state of the buttons
     }
 
-    UNUSED(previousButtons); // You can remove this once previousButtons is used
     return 0;
 }
