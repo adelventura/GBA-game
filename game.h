@@ -3,30 +3,6 @@
 
 #include "gba.h"
 
-/* TODO: */
-
-// Create any necessary structs //
-
-/*
-* For example, for a Snake game, one could be:
-*
-* typedef struct snake {
-*   int heading;
-*   int length;
-*   int x;
-*   int y;
-* } Snake;
-*
-*
-* Example of a struct to hold state machine data:
-*
-* typedef struct state {
-*   int currentState;
-*   int nextState;
-* } State
-*
-*/
-
 typedef enum
 {
     START,
@@ -49,11 +25,5 @@ typedef struct shark
     int x;
     int y;
 } Shark;
-
-typedef struct state
-{
-    int currentState;
-    int nextState;
-} State;
 
 #endif
