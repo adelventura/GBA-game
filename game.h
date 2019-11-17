@@ -27,6 +27,14 @@
 *
 */
 
+typedef enum
+{
+    START,
+    PLAY,
+    WIN,
+    LOSE,
+} GBAState;
+
 typedef struct fish
 {
     int direction;
