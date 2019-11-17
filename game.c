@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
 #include "gba.h"
 #include "game.h"
@@ -23,6 +24,14 @@ int clamp(int min, int max, int current)
         return max;
     }
     return current;
+}
+
+bool check_collision(Shark *player, Fish *fish)
+{
+    return player->x < fish->x + fish->size &&
+           player->x + player->size > fish->x &&
+           player->y < fish->y + fish->size &&
+           player->y + player->size > fish->y;
 }
 
 Fish new_fish(void)
@@ -62,9 +71,10 @@ State new_game(void)
     State state = {
         .state = START,
         .player = {
-            .x = 10,
-            .y = 10,
-            .size = INITIAL_SIZE}};
+            .x = WIDTH / 2,
+            .y = HEIGHT / 2,
+            .size = INITIAL_SIZE},
+        .lives = 3};
 
     for (int i = 0; i < NUM_FISH; i++)
     {
@@ -104,7 +114,26 @@ void update(State *state, u32 buttons)
         fish->x += fish->vx;
         fish->y += fish->vy;
 
-        if ((fish->x < 0 && fish->vx < 0) || (fish->x > (fish->size + WIDTH) && fish->vx > 0) || (fish->y < 0 && fish->vy < 0) || (fish->y > (fish->size + HEIGHT) && fish->vy > 0))
+        if (check_collision(player, fish))
+        {
+            if (fish->size <= player->size)
+            {
+                player->size += (fish->size / 2);
+                player->size = clamp(1, WINNING_SIZE, player->size);
+
+                if (state->lives < 3)
+                {
+                    state->lives += 1;
+                }
+            }
+            else
+            {
+                state->lives -= 1;
+            }
+
+            state->fish[i] = new_fish();
+        }
+        else if ((fish->x < 0 && fish->vx < 0) || (fish->x > (fish->size + WIDTH) && fish->vx > 0) || (fish->y < 0 && fish->vy < 0) || (fish->y > (fish->size + HEIGHT) && fish->vy > 0))
         {
             state->fish[i] = new_fish();
         }
@@ -132,6 +161,16 @@ void update(State *state, u32 buttons)
 
     player->x = clamp(0, WIDTH - player->size, player->x);
     player->y = clamp(0, HEIGHT - player->size, player->y);
+
+    if (player->size >= WINNING_SIZE)
+    {
+        state->state = WIN;
+    }
+
+    if (state->lives == 0)
+    {
+        state->state = LOSE;
+    }
 }
 
 int main(void)

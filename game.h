@@ -5,7 +5,7 @@
 
 #define SPEED 3
 #define INITIAL_SIZE 6
-#define WINNING_SIZE 100
+#define WINNING_SIZE 50
 
 #define NUM_FISH 4
 #define SMALL_FISH 1
@@ -42,6 +42,8 @@ typedef struct state
     Shark player;
 
     Fish fish[4];
+
+    int lives;
 } State;
 
 #endif

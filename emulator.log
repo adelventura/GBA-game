@@ -18,9 +18,9 @@ Starting Mednafen 0.9.48
    Loading override settings from "/home/amd/.mednafen/pgconfig/Game.gba.cfg"...
     Failed: Error opening file "/home/amd/.mednafen/pgconfig/Game.gba.cfg": No such file or directory
 
-   ROM:       357KiB
-   ROM CRC32: 0xeb541567
-   ROM MD5:   0x6e197bae5b48be0b0e165a79fd5b327f
+   ROM:       354KiB
+   ROM CRC32: 0x33430c4d
+   ROM MD5:   0x1436447b2aff1a97edbc1707366f2448
 
   Loading custom palette from "/home/amd/.mednafen/palettes/gba.pal"...
    Error: Error opening file "/home/amd/.mednafen/palettes/gba.pal": No such file or directory
@@ -52,3 +52,6 @@ Starting Mednafen 0.9.48
   Checking maximum texture size...
    Apparently it is at least: 16384 x 16384
   Using GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV for texture source data.
+
+Signal has been caught and dealt with: SIGINT
+How DARE you interrupt me!

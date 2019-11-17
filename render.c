@@ -4,6 +4,7 @@
 #include <stdlib.h>
 
 #include "images/bg.h"
+#include "images/shark.h"
 
 char score_buffer[15];
 
@@ -13,9 +14,9 @@ void render_score(Shark *shark)
     drawString(2, HEIGHT - 10, score_buffer, YELLOW);
 }
 
-void render_shark(Shark *shark)
+void render_player(Shark *player)
 {
-    drawRectDMA(shark->x, shark->y, shark->size, shark->size, RED);
+    drawRectDMA(player->x, player->y, player->size, player->size, GRAY);
 }
 
 void render_fish(Fish *fish)
@@ -23,22 +24,37 @@ void render_fish(Fish *fish)
     drawRectDMA(fish->x, fish->y, fish->size, fish->size, YELLOW);
 }
 
+void render_lives(State *state)
+{
+    for (int i = 0; i < state->lives; i++)
+    {
+        drawImageDMA(2 + (i * 12), 2, 10, 10, shark);
+    }
+}
+
 void render(State *state)
 {
-    render_score(&state->player);
-
     for (int i = 0; i < NUM_FISH; i++)
     {
         render_fish(&state->fish[i]);
     }
 
-    render_shark(&state->player);
+    render_player(&state->player);
+
+    render_score(&state->player);
+    render_lives(state);
 }
 
 void clear(State *state)
 {
-    // clear the score
-    drawFullScreenImagePatchDMA(2, HEIGHT - 10, 30, 10, bg);
+    if (state->state == WIN)
+    {
+        return;
+    }
+
+    // clear the score and lives
+    drawFullScreenImagePatchDMA(2, HEIGHT - 10, 50, 10, bg);
+    drawFullScreenImagePatchDMA(2, 2, 40, 10, bg);
 
     for (int i = 0; i < NUM_FISH; i++)
     {
