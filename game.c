@@ -95,7 +95,7 @@ void handle_select(State *state, u32 buttons)
 void start_on_keypress(State *state, u32 prev, u32 curr)
 {
     UNUSED(prev);
-    if (curr != BUTTONS)
+    if ((prev & BUTTONS) == BUTTONS && curr != BUTTONS)
     {
         *state = new_game();
         state->state = PLAY;

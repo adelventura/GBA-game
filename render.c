@@ -21,7 +21,7 @@ void render_player(Shark *player)
 
 void render_fish(Fish *fish)
 {
-    drawRectDMA(fish->x, fish->y, fish->size, fish->size, YELLOW);
+    drawRectDMA(fish->x, fish->y, fish->size, fish->size, BLUE);
 }
 
 void render_lives(State *state)
