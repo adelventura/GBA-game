@@ -1,7 +1,7 @@
 /*
  * Exported with nin10kit v1.7
  * Invocation command was nin10kit --mode=3 --resize=240x160 images/splash_screen images/splash_screen.png 
- * Time-stamp: Saturday 11/16/2019, 20:41:49
+ * Time-stamp: Sunday 11/17/2019, 19:01:10
  * 
  * Image Information
  * -----------------

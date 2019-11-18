@@ -28,7 +28,7 @@ void render_lives(State *state)
 {
     for (int i = 0; i < state->lives; i++)
     {
-        drawImageDMA(2 + (i * 12), 2, 10, 10, shark);
+        drawImageDMA(2 + (i * 12), 5, 10, 10, shark);
     }
 }
 
@@ -53,8 +53,8 @@ void clear(State *state)
     }
 
     // clear the score and lives
-    drawFullScreenImagePatchDMA(2, HEIGHT - 10, 50, 10, bg);
-    drawFullScreenImagePatchDMA(2, 2, 40, 10, bg);
+    drawFullScreenImagePatchDMA(2, HEIGHT - 10, 60, 10, bg);
+    drawFullScreenImagePatchDMA(2, 2, 40, 12, bg);
 
     for (int i = 0; i < NUM_FISH; i++)
     {
