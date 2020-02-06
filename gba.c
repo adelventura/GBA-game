@@ -31,15 +31,28 @@ int randint(int min, int max)
     return (qran() * (max - min) >> 15) + min;
 }
 
+// set screen pixel to color
+//
+// x: x position of pixel
+// y: y position of pixel
+// color: color to use
 void setPixel(int x, int y, u16 color)
 {
     videoBuffer[OFFSET(y, x, WIDTH)] = color;
 }
 
+// draw rectangle on screen
+//
+// x: x position of start of rectangle
+// y: y position of start of rectangle
+// width: width of rectangle
+// height: height of rectangle
+// color: color of rectangle
 void drawRectDMA(int x, int y, int width, int height, volatile u16 color)
 {
     for (int row = y; row < y + height; row += 1)
     {
+        // DMA row-by-row
         DMA[3].src = &color;
         DMA[3].dst = &videoBuffer[OFFSET(row, x, WIDTH)];
 
@@ -47,10 +60,19 @@ void drawRectDMA(int x, int y, int width, int height, volatile u16 color)
     }
 }
 
+// Only draw a portion of a fullscreen image on screen. Used to clear small portions
+// of the game screen before drawing the next frame.
+//
+// x: starting x position of the patch
+// y: starting y position of the patch
+// width: width of the area to patch
+// height: height of the area to patch
+// image: pointer to first element of image to use -- requires image to be fullscreen size
 void drawFullScreenImagePatchDMA(int x, int y, int width, int height, const u16 *image)
 {
     for (int row = 0; row < height; row += 1)
     {
+        // DMA row-by-row
         DMA[3].cnt = 0;
         DMA[3].src = &image[OFFSET(y + row, x, WIDTH)];
         DMA[3].dst = &videoBuffer[OFFSET(y + row, x, WIDTH)];
@@ -59,6 +81,9 @@ void drawFullScreenImagePatchDMA(int x, int y, int width, int height, const u16 
     }
 }
 
+// Draw a fullscreen image to screen
+//
+// image: pointer to first element of the image to use
 void drawFullScreenImageDMA(const u16 *image)
 {
     DMA[3].cnt = 0;
@@ -67,14 +92,13 @@ void drawFullScreenImageDMA(const u16 *image)
     DMA[3].cnt = WIDTH * HEIGHT | DMA_SOURCE_INCREMENT | DMA_ON;
 }
 
-/* drawimage
-*  A function that will draw an arbitrary sized image * onto the screen (with DMA).
-*  @param r row to start drawing the image at
-*  @param c column to start drawing the image at
-*  @param width width of the image
-*  @param height height of the image
-*  @param image pointer to the first element of the image
-*/
+//  A function that will draw an arbitrary sized image * onto the screen (with DMA).
+//
+//  r: row to start drawing the image at
+//  c: column to start drawing the image at
+//  width: width of the image
+//  height: height of the image
+//  image: pointer to the first element of the image
 void drawImageDMA(int x, int y, int width, int height, const u16 *image)
 {
     for (int row = 0; row < height; row += 1)
@@ -87,6 +111,9 @@ void drawImageDMA(int x, int y, int width, int height, const u16 *image)
     }
 }
 
+// Fill the screen with a solid color
+//
+// color: color to use
 void fillScreenDMA(volatile u16 color)
 {
     DMA[3].cnt = 0;
@@ -95,6 +122,12 @@ void fillScreenDMA(volatile u16 color)
     DMA[3].cnt = WIDTH * HEIGHT | DMA_SOURCE_FIXED | DMA_DESTINATION_INCREMENT | DMA_ON;
 }
 
+// Draw a character to screen
+//
+// c: column to start drawing the char at
+// r: row to start drawing the char at
+// ch: character to draw
+// color: color to use
 void drawChar(int col, int row, char ch, u16 color)
 {
     for (int r = 0; r < 8; r++)
@@ -109,6 +142,12 @@ void drawChar(int col, int row, char ch, u16 color)
     }
 }
 
+// Draw a string to screen
+//
+// c: column to start drawing the string at
+// r: row to start drawing the string at
+// str: pointer to string to draw
+// color: color to use
 void drawString(int col, int row, char *str, u16 color)
 {
     while (*str)
@@ -118,6 +157,14 @@ void drawString(int col, int row, char *str, u16 color)
     }
 }
 
+// Draw a string centered to coordinates
+//
+// x: x position string to be centered at
+// y: y position string to be centered at
+// width: width of string
+// height: height of string
+// str: pointer to string to draw
+// color: color to use
 void drawCenteredString(int x, int y, int width, int height, char *str, u16 color)
 {
     u32 len = 0;
