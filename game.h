@@ -38,11 +38,8 @@ typedef struct shark
 typedef struct state
 {
     GBAState state;
-
     Shark player;
-
     Fish fish[4];
-
     int lives;
 } State;
 
