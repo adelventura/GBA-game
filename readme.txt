@@ -1,4 +1,4 @@
-Shark Adventure -- Ashley DelVentura
+Shark Adventure 
 
 - The player is the gray rectangle representing a shark.
 - Move around the screen using the arrow keys to eat the blue "fish."
